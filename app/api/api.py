@@ -1,51 +1,73 @@
 import json
+import os
+from typing import Any, Dict, List, Optional
+
+from app.utils.logging import get_logger
 
 
-def read_user():
-    with open('data/users.json') as stream:
-        users = json.load(stream)
+DATA_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+)
+logger = get_logger(__name__)
 
-    return users
+
+def _load_json(filename: str) -> Any:
+    """Load a JSON file from the application's data directory."""
+    file_path = os.path.join(DATA_PATH, filename)
+
+    # Keep file encoding explicit for non-ASCII data.
+    with open(file_path, encoding='utf-8') as file:
+        return json.load(file)
 
 
-def read_questions(position: int):
-    with open('data/questions.json') as stream:
-        questions = json.load(stream)
+def read_user() -> List[Dict[str, Any]]:
+    """Return all users from the data file."""
+    logger.debug('Reading users')
+    return _load_json('users.json')
+
+
+def read_questions(position: int) -> Optional[Dict[str, Any]]:
+    """Return the question at the requested position, if it exists."""
+    logger.debug('Reading question at position %s', position)
+    questions = _load_json('questions.json')
 
     for question in questions:
         if question['position'] == position:
             return question
 
+    return None
 
-def read_alternatives(question_id: int):
-    alternatives_question = []
-    with open('data/alternatives.json') as stream:
-        alternatives = json.load(stream)
+
+def read_alternatives(question_id: int) -> List[Dict[str, Any]]:
+    """Return alternatives belonging to the requested question."""
+    logger.debug('Reading alternatives for question_id %s', question_id)
+    question_alternatives = []
+    alternatives = _load_json('alternatives.json')
 
     for alternative in alternatives:
         if alternative['question_id'] == question_id:
-            alternatives_question.append(alternative)
+            question_alternatives.append(alternative)
 
-    return alternatives_question
-
-
-def create_answer(payload):
-    result = f"Received answer for user_id: {payload['user_id']} and question_id: {payload['answers'][0]['question_id']}."
-
-    return result
+    return question_alternatives
 
 
-def read_result(user_id: int):
+def create_answer(payload: Dict[str, Any]) -> str:
+    """Return a confirmation message for the submitted answer."""
+    logger.debug('Creating answer for user_id %s', payload['user_id'])
+    return (
+        f"Received answer for user_id: {payload['user_id']} and "
+        f"question_id: {payload['answers'][0]['question_id']}."
+    )
+
+
+def read_result(user_id: int) -> List[Dict[str, Any]]:
+    """Return the result data for the requested user."""
+    logger.debug('Reading result for user_id %s', user_id)
     user_result = []
 
-    with open('data/results.json') as stream:
-        results = json.load(stream)
-
-    with open('data/users.json') as stream:
-        users = json.load(stream)
-
-    with open('data/cars.json') as stream:
-        cars = json.load(stream)
+    results = _load_json('results.json')
+    users = _load_json('users.json')
+    cars = _load_json('cars.json')
 
     for result in results:
         if result['user_id'] == user_id:
