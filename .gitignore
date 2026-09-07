@@ -268,4 +268,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Ignore log files and log directory
+*.log
+logs/
+
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm,windows,visualstudiocode
