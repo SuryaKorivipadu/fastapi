@@ -1,17 +1,4 @@
-astroid			
-Click			
-colorama		
-fastapi			
-gunicorn		
-h11				
-isort			
-lazy-object-proxy
-mccabe			
-pydantic		
-pylint			
-six				
-starlette		
-uvicorn			
-websockets		
-wrapt			
-uvloop
+fastapi == 0.46.0
+uvicorn == 0.11.1
+pytest == 5.3.2
+requests == 2.22.0
