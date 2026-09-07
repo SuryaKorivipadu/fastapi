@@ -30,24 +30,7 @@ def read_alternatives(question_id: int):
 
 
 def create_answer(payload):
-    answers = []
-    result = []
-
-    with open('data/alternatives.json') as stream:
-        alternatives = json.load(stream)
-
-    for question in payload['answers']:
-        for alternative in alternatives:
-            if alternative['question_id'] == question['question_id']:
-                answers.append(alternative['alternative'])
-                break
-
-    with open('data/cars.json') as stream:
-        cars = json.load(stream)
-
-    for car in cars:
-        if answers[0] in car.values() and answers[1] in car.values() and answers[2] in car.values():
-            result.append(car)
+    result = f"Received answer for user_id: {payload['user_id']} and question_id: {payload['answers'][0]['question_id']}."
 
     return result
 
